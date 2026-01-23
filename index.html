@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>おおたけクリーニング会員証</title>
+    <!-- LIFF SDK -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #E6007E;
+            /* Pink */
+            --accent-color: #C20069;
+            /* Darker Pink */
+            --bg-color: #FFF0F5;
+            /* Light Pinkish BG */
+            --text-color: #333333;
+            --error-color: #E60012;
+            --white: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* Vertically center content */
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--bg-color);
+        }
+
+        /* Views */
+        .view {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Typography */
+        h1,
+        h2 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: var(--accent-color);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+        }
+
+        /* Forms */
+        .form-group {
+            width: 100%;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+
+        input[type="text"],
+        input[type="tel"] {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+            background-color: var(--white);
+            -webkit-appearance: none;
+            appearance: none;
+            /* Standard */
+            /* iOS reset */
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+        }
+
+        input::placeholder {
+            color: #ccc;
+        }
+
+        .helper-text {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: 8px;
+            display: none;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: var(--white);
+            box-shadow: 0 4px 10px rgba(230, 0, 126, 0.3);
+        }
+
+        .btn-link {
+            background: transparent;
+            color: #888;
+            font-size: 0.9rem;
+            padding: 10px;
+            margin-top: 16px;
+            text-decoration: underline;
+        }
+
+        /* Membership Card Style */
+        .card {
+            background: var(--white);
+            width: 100%;
+            border-radius: 20px;
+            padding: 40px 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            border-top: 5px solid var(--primary-color);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative watermark-like circle */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: var(--primary-color);
+            opacity: 0.05;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .member-name {
+            font-size: 2.5rem;
+            /* Extremely large */
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.2;
+            overflow-wrap: break-word;
+        }
+
+        .member-suffix {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #666;
+            margin-left: 8px;
+        }
+
+        .member-id-label {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 32px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .member-phone {
+            font-size: 2rem;
+            /* Large */
+            font-weight: bold;
+            color: var(--accent-color);
+            letter-spacing: 2px;
+            font-family: monospace;
+            /* Monospace for numbers alignment */
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        /* Loading */
+        #loading-view {
+            justify-content: center;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: var(--white);
+            z-index: 100;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Loading View -->
+    <div id="loading-view" class="view active">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="container">
+        <!-- Registration View -->
+        <div id="registration-view" class="view">
+            <div class="logo-text">おおたけクリーニング</div>
+            <h2>会員情報登録</h2>
+            <p style="margin-bottom: 24px; font-size: 0.9rem; color: #666; text-align: center;">
+                サービス利用のために、<br>会員情報を入力してください。
+            </p>
+
+            <form id="register-form">
+                <div class="form-group">
+                    <label>お名前（カタカナ）</label>
+                    <div style="display: flex; gap: 12px;">
+                        <div style="flex: 1;">
+                            <label for="surname"
+                                style="font-size: 0.85rem; font-weight: normal; margin-bottom: 4px; color: #666;">氏
+                                (Surname)</label>
+                            <input type="text" id="surname" name="surname" placeholder="オオタケ" required>
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="given-name"
+                                style="font-size: 0.85rem; font-weight: normal; margin-bottom: 4px; color: #666;">名
+                                (Given Name)</label>
+                            <input type="text" id="given-name" name="given-name" placeholder="タロウ" required>
+                        </div>
+                    </div>
+                    <div class="helper-text">※カタカナで入力してください</div>
+                    <div id="error-name" class="error-message">氏・名ともにカタカナで入力してください</div>
+                </div>
+
+                <div class="form-group">
+                    <label>電話番号</label>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="tel" id="phone-1" name="phone-1" placeholder="090" maxlength="4" required
+                            inputmode="numeric" style="flex: 1; text-align: center;">
+                        <span>-</span>
+                        <input type="tel" id="phone-2" name="phone-2" placeholder="1234" maxlength="4" required
+                            inputmode="numeric" style="flex: 1; text-align: center;">
+                        <span>-</span>
+                        <input type="tel" id="phone-3" name="phone-3" placeholder="5678" maxlength="4" required
+                            inputmode="numeric" style="flex: 1; text-align: center;">
+                    </div>
+                    <div class="helper-text">※この電話番号は会員情報の照会に使われます</div>
+                    <div id="error-phone" class="error-message">電話番号を正しく入力してください</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">登録して会員証を表示</button>
+            </form>
+        </div>
+
+        <!-- Member Card View -->
+        <div id="member-view" class="view">
+            <div class="logo-text">おおたけクリーニング 会員証</div>
+
+            <div class="card">
+                <div class="member-name-area">
+                    <span id="display-name" class="member-name"></span>
+                    <span class="member-suffix">様</span>
+                </div>
+
+                <div class="member-id-label">電話番号（下4桁）</div>
+                <div id="display-phone" class="member-phone"></div>
+            </div>
+
+            <button id="btn-edit" class="btn btn-link">登録情報を修正する</button>
+
+            <div class="footer">
+                <div style="margin-bottom: 12px;">
+                    <a href="privacy.html"
+                        style="color: #888; text-decoration: underline; margin: 0 8px;">プライバシーポリシー</a>
+                    <a href="terms.html" style="color: #888; text-decoration: underline; margin: 0 8px;">利用規約</a>
+                </div>
+                Copyright © 有限会社大嶽商会
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constants in JS
+        const STORAGE_KEY_SURNAME = 'otake_member_surname';
+        const STORAGE_KEY_GIVENNAME = 'otake_member_givenname';
+        const STORAGE_KEY_PHONE = 'otake_member_phone'; // Full number for display/logic
+        const STORAGE_KEY_PHONE_1 = 'otake_member_phone_1'; // Part 1
+        const STORAGE_KEY_PHONE_2 = 'otake_member_phone_2'; // Part 2
+        const STORAGE_KEY_PHONE_3 = 'otake_member_phone_3'; // Part 3
+        const LIFF_ID = '2008951917-4tmvhtpy';
+
+        // DOM Elements
+        const views = {
+            loading: document.getElementById('loading-view'),
+            registration: document.getElementById('registration-view'),
+            member: document.getElementById('member-view')
+        };
+
+        const inputs = {
+            surname: document.getElementById('surname'),
+            givenName: document.getElementById('given-name'),
+            phone1: document.getElementById('phone-1'),
+            phone2: document.getElementById('phone-2'),
+            phone3: document.getElementById('phone-3')
+        };
+
+        const displays = {
+            name: document.getElementById('display-name'),
+            phone: document.getElementById('display-phone')
+        };
+
+        const errors = {
+            name: document.getElementById('error-name'),
+            phone: document.getElementById('error-phone')
+        };
+
+        // --- Helpers ---
+
+        // Convert Half-width Katakana to Full-width
+        function toFullWidthKatakana(str) {
+            const halfMap = {
+                'ｱ': 'ア', 'ｲ': 'イ', 'ｳ': 'ウ', 'ｴ': 'エ', 'ｵ': 'オ',
+                'ｶ': 'カ', 'ｷ': 'キ', 'ｸ': 'ク', 'ｹ': 'ケ', 'ｺ': 'コ',
+                'ｻ': 'サ', 'ｼ': 'シ', 'ｽ': 'ス', 'ｾ': 'セ', 'ｿ': 'ソ',
+                'ﾀ': 'タ', 'ﾁ': 'チ', 'ﾂ': 'ツ', 'ﾃ': 'テ', 'ﾄ': 'ト',
+                'ﾅ': 'ナ', 'ﾆ': 'ニ', 'ﾇ': 'ヌ', 'ﾈ': 'ネ', 'ﾉ': 'ノ',
+                'ﾊ': 'ハ', 'ﾋ': 'ヒ', 'ﾌ': 'フ', 'ﾍ': 'ヘ', 'ﾎ': 'ホ',
+                'ﾏ': 'マ', 'ﾐ': 'ミ', 'ﾑ': 'ム', 'ﾒ': 'メ', 'ﾓ': 'モ',
+                'ﾔ': 'ヤ', 'ﾕ': 'ユ', 'ﾖ': 'ヨ',
+                'ﾗ': 'ラ', 'ﾘ': 'リ', 'ﾙ': 'ル', 'ﾚ': 'レ', 'ﾛ': 'ロ',
+                'ﾜ': 'ワ', 'ｦ': 'ヲ', 'ﾝ': 'ン',
+                'ｶﾞ': 'ガ', 'ｷﾞ': 'ギ', 'ｸﾞ': 'グ', 'ｹﾞ': 'ゲ', 'ｺﾞ': 'ゴ',
+                'ｻﾞ': 'ザ', 'ｼﾞ': 'ジ', 'ｽﾞ': 'ズ', 'ｾﾞ': 'ゼ', 'ｿﾞ': 'ゾ',
+                'ﾀﾞ': 'ダ', 'ﾁﾞ': 'ヂ', 'ﾂﾞ': 'ヅ', 'ﾃﾞ': 'デ', 'ﾄﾞ': 'ド',
+                'ﾊﾞ': 'バ', 'ﾋﾞ': 'ビ', 'ﾌﾞ': 'ブ', 'ﾍﾞ': 'ベ', 'ﾎﾞ': 'ボ',
+                'ﾊﾟ': 'パ', 'ﾋﾟ': 'ピ', 'ﾌﾟ': 'プ', 'ﾍﾟ': 'ペ', 'ﾎﾟ': 'ポ',
+                'ｧ': 'ァ', 'ｨ': 'ィ', 'ｩ': 'ゥ', 'ｪ': 'ェ', 'ｫ': 'ォ',
+                'ｯ': 'ッ', 'ｬ': 'ャ', 'ｭ': 'ュ', 'ｮ': 'ョ', 'ｰ': 'ー',
+                '｡': '。', '､': '、', '｢': '「', '｣': '」', '･': '・'
+            };
+            // Normalize via regex is tricky for dakuten combination in pure string replacement without library
+            // But simple character mapping works for standard inputs.
+            // A more robust way in modern browsers:
+            // But requirement asks for blur handling.
+
+            // Simple approach: replace known single chars. For dakuten combining chars, we handle pre-combined or use normalize if available.
+            // Let's stick to a solid regex replace for basic half-width mapping which is most common user error.
+
+            let res = str;
+            // Iterate map
+            for (const [key, val] of Object.entries(halfMap)) {
+                // Global replace
+                res = res.split(key).join(val);
+            }
+            return res;
+        }
+
+        function isKatakana(str) {
+            // Full-width Katakana range: \u30A0-\u30FF
+            // Also allow Long vowel mark 'ー' (\u30FC)
+            return /^[\u30A0-\u30FF\u30FC]+$/.test(str);
+        }
+
+        function switchView(viewName) {
+            Object.values(views).forEach(el => el.classList.remove('active'));
+            views[viewName].classList.add('active');
+        }
+
+        // --- Core Logic ---
+
+        function initApp() {
+            // Check Local Storage
+            const savedSurname = localStorage.getItem(STORAGE_KEY_SURNAME);
+            const savedGivenName = localStorage.getItem(STORAGE_KEY_GIVENNAME);
+            const savedPhone = localStorage.getItem(STORAGE_KEY_PHONE);
+
+            if (savedSurname && savedGivenName && savedPhone) {
+                showMemberCard(savedSurname, savedGivenName, savedPhone);
+            } else {
+                showRegistration();
+            }
+        }
+
+        function showRegistration() {
+            // Clear inputs just in case
+            inputs.surname.value = '';
+            inputs.givenName.value = '';
+            inputs.phone1.value = '';
+            inputs.phone2.value = '';
+            inputs.phone3.value = '';
+            hideErrors();
+            switchView('registration');
+        }
+
+        function showMemberCard(surname, givenName, phone) {
+            displays.name.textContent = `${surname} ${givenName}`;
+            // Format phone: ***-****-1234 (Extract last 4 chars)
+            const last4 = phone.slice(-4);
+            displays.phone.textContent = `***-****-${last4}`;
+            switchView('member');
+        }
+
+        function hideErrors() {
+            errors.name.style.display = 'none';
+            errors.phone.style.display = 'none';
+        }
+
+        // --- Event Listeners ---
+
+        // 1. Name Input Blur: Auto-convert
+        [inputs.surname, inputs.givenName].forEach(input => {
+            input.addEventListener('blur', (e) => {
+                const val = e.target.value;
+                if (!val) return;
+                const converted = toFullWidthKatakana(val);
+                if (converted !== val) {
+                    e.target.value = converted;
+                }
+            });
+        });
+
+        // 2. Form Submission
+        document.getElementById('register-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            hideErrors();
+
+            const surnameVal = inputs.surname.value.trim();
+            const givenNameVal = inputs.givenName.value.trim();
+
+            const p1 = inputs.phone1.value.trim();
+            const p2 = inputs.phone2.value.trim();
+            const p3 = inputs.phone3.value.trim();
+            const phoneVal = `${p1}${p2}${p3}`; // Store as raw numbers
+
+            let isValid = true;
+
+            // Validate Name
+            if (!isKatakana(surnameVal) || !isKatakana(givenNameVal)) {
+                errors.name.style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate Phone (Basic numeric check for all parts)
+            if (!/^\d+$/.test(p1) || !/^\d+$/.test(p2) || !/^\d+$/.test(p3)) {
+                errors.phone.style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Save
+                localStorage.setItem(STORAGE_KEY_SURNAME, surnameVal);
+                localStorage.setItem(STORAGE_KEY_GIVENNAME, givenNameVal);
+                localStorage.setItem(STORAGE_KEY_PHONE, phoneVal);
+                // Save individual parts to preserve split
+                localStorage.setItem(STORAGE_KEY_PHONE_1, p1);
+                localStorage.setItem(STORAGE_KEY_PHONE_2, p2);
+                localStorage.setItem(STORAGE_KEY_PHONE_3, p3);
+
+                // Transition
+                showMemberCard(surnameVal, givenNameVal, phoneVal);
+            }
+        });
+
+        // 3. Edit Button
+        document.getElementById('btn-edit').addEventListener('click', () => {
+            // Pre-fill
+            const savedSurname = localStorage.getItem(STORAGE_KEY_SURNAME);
+            const savedGivenName = localStorage.getItem(STORAGE_KEY_GIVENNAME);
+            const savedPhone = localStorage.getItem(STORAGE_KEY_PHONE);
+            const savedPhone1 = localStorage.getItem(STORAGE_KEY_PHONE_1);
+            const savedPhone2 = localStorage.getItem(STORAGE_KEY_PHONE_2);
+            const savedPhone3 = localStorage.getItem(STORAGE_KEY_PHONE_3);
+
+            if (savedSurname) inputs.surname.value = savedSurname;
+            if (savedGivenName) inputs.givenName.value = savedGivenName;
+
+            // Priority: Use individual parts if available (preserves user split)
+            if (savedPhone1 !== null && savedPhone2 !== null && savedPhone3 !== null) {
+                inputs.phone1.value = savedPhone1;
+                inputs.phone2.value = savedPhone2;
+                inputs.phone3.value = savedPhone3;
+            } else if (savedPhone) {
+                // Fallback for legacy data or if parts missing
+                // Try to split logic roughly
+                const len = savedPhone.length;
+                if (len === 11) {
+                    inputs.phone1.value = savedPhone.substring(0, 3);
+                    inputs.phone2.value = savedPhone.substring(3, 7);
+                    inputs.phone3.value = savedPhone.substring(7);
+                } else if (len === 10) {
+                    // Could be 2-4-4 (03) or 3-3-4 etc. 
+                    if (savedPhone.startsWith('03') || savedPhone.startsWith('06')) {
+                        inputs.phone1.value = savedPhone.substring(0, 2);
+                        inputs.phone2.value = savedPhone.substring(2, 6);
+                        inputs.phone3.value = savedPhone.substring(6);
+                    } else {
+                        // Default to 3-3-4?
+                        inputs.phone1.value = savedPhone.substring(0, 3);
+                        inputs.phone2.value = savedPhone.substring(3, 6);
+                        inputs.phone3.value = savedPhone.substring(6);
+                    }
+                } else {
+                    inputs.phone1.value = savedPhone.substring(0, 3);
+                    inputs.phone2.value = savedPhone.substring(3, 7);
+                    inputs.phone3.value = savedPhone.substring(7);
+                }
+            }
+
+            switchView('registration');
+        });
+
+        // --- Initialization ---
+
+        // Start LIFF
+        async function main() {
+            try {
+                // NOTE: In non-LIFF browser, liff.init may fail or do nothing if LIFF ID is invalid for the domain.
+                // We wrap it to ensure app still loads for preview if LIFF fails.
+                await liff.init({ liffId: LIFF_ID });
+                if (!liff.isLoggedIn() && liff.isInClient()) {
+                    // Optional: auto login if needed, but not strictly required for just showing a view unless we need Line profile.
+                    // Requirement doesn't say we need Line Profile, just local storage.
+                }
+            } catch (err) {
+                console.error('LIFF Init failed', err);
+            } finally {
+                // Always start app logic even if LIFF fails (e.g. debugging in normal browser)
+                initApp();
+            }
+        }
+
+        main();
+
+    </script>
+</body>
+
+</html>
