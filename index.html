@@ -421,6 +421,10 @@
             padding-bottom: max(40px, env(safe-area-inset-bottom));
             text-align: center;
             z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
         }
 
         .btn-staff {
@@ -442,6 +446,27 @@
         .btn-staff:active {
             transform: scale(0.96);
             background: #FFF0F5;
+        }
+
+        .btn-close-app {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 40px;
+            border: 2px solid #ccc;
+            border-radius: 30px;
+            background: var(--white);
+            color: #888;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        .btn-close-app:active {
+            transform: scale(0.96);
+            background: #f5f5f5;
         }
     </style>
 </head>
@@ -531,7 +556,8 @@
             </div>
         </div>
         <div class="btn-staff-area">
-            <button id="btn-staff-show" class="btn-staff">スタッフに見せる(反転して表示)</button>
+            <button id="btn-staff-show" class="btn-staff">スタッフに見せる(反転表示)</button>
+            <button id="btn-close-app" class="btn-close-app">閉じる</button>
         </div>
     </div>
 
@@ -549,6 +575,7 @@
         </div>
         <div class="staff-close-area">
             <button id="btn-staff-close" class="staff-close-btn">戻る</button>
+            <button id="btn-close-app-staff" class="btn-close-app" style="margin-top: 12px;">閉じる</button>
         </div>
     </div>
 
@@ -809,6 +836,24 @@
                 overlay.style.display = 'none';
             }, 300);
         });
+
+        // 5. Close App Buttons (liff.closeWindow)
+        function closeApp() {
+            try {
+                if (liff.isInClient()) {
+                    liff.closeWindow();
+                } else {
+                    // 通常ブラウザの場合はウィンドウを閉じる
+                    window.close();
+                }
+            } catch (e) {
+                console.error('Close failed', e);
+                window.close();
+            }
+        }
+
+        document.getElementById('btn-close-app').addEventListener('click', closeApp);
+        document.getElementById('btn-close-app-staff').addEventListener('click', closeApp);
 
         // --- Initialization ---
 
