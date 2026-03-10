@@ -412,24 +412,35 @@
             background: #FFF0F5;
         }
 
-        .btn-staff {
+        .btn-staff-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            padding: 16px;
+            padding: 24px 0 env(safe-area-inset-bottom, 40px);
+            padding-bottom: max(40px, env(safe-area-inset-bottom));
+            text-align: center;
+            z-index: 10;
+        }
+
+        .btn-staff {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 40px;
             border: 2px solid var(--primary-color);
             border-radius: 30px;
-            font-size: 1.05rem;
+            background: var(--white);
+            color: var(--accent-color);
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-            text-align: center;
-            background: var(--white);
-            color: var(--accent-color);
-            margin-bottom: 12px;
             font-family: 'Noto Sans JP', sans-serif;
         }
 
         .btn-staff:active {
-            transform: scale(0.98);
+            transform: scale(0.96);
             background: #FFF0F5;
         }
     </style>
@@ -506,7 +517,7 @@
                 <div id="display-phone" class="member-phone"></div>
             </div>
 
-            <button id="btn-staff-show" class="btn-staff">スタッフに見せる(反転して表示)</button>
+
 
             <button id="btn-edit" class="btn btn-link">登録情報を修正する</button>
 
@@ -518,6 +529,9 @@
                 </div>
                 Copyright © 有限会社大嶽商会
             </div>
+        </div>
+        <div class="btn-staff-area">
+            <button id="btn-staff-show" class="btn-staff">スタッフに見せる(反転して表示)</button>
         </div>
     </div>
 
@@ -534,7 +548,7 @@
             </div>
         </div>
         <div class="staff-close-area">
-            <button id="btn-staff-close" class="staff-close-btn">✕ 閉じる</button>
+            <button id="btn-staff-close" class="staff-close-btn">戻る</button>
         </div>
     </div>
 
