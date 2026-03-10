@@ -384,27 +384,34 @@
         }
 
         .staff-close-area {
-            padding: 24px 0 env(safe-area-inset-bottom, 40px);
-            padding-bottom: max(40px, env(safe-area-inset-bottom));
+            padding: 16px 20px env(safe-area-inset-bottom, 24px);
+            padding-bottom: max(24px, env(safe-area-inset-bottom));
             width: 100%;
-            text-align: center;
             flex-shrink: 0;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: stretch;
+            gap: 10px;
         }
 
         .staff-close-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 14px 40px;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 20px;
             border: 2px solid var(--primary-color);
             border-radius: 30px;
             background: var(--white);
             color: var(--accent-color);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             font-family: 'Noto Sans JP', sans-serif;
+            flex: 1;
+            max-width: 220px;
         }
 
         .staff-close-btn:active {
@@ -581,7 +588,7 @@
         </div>
         <div class="staff-close-area">
             <button id="btn-staff-close" class="staff-close-btn">戻る</button>
-            <button id="btn-close-app-staff" class="btn-close-app" style="margin-top: 12px;">閉じる</button>
+            <button id="btn-close-app-staff" class="btn-close-app">閉じる</button>
         </div>
     </div>
 
