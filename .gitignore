@@ -1,0 +1,13 @@
+# macOSが自動生成するファイル（Finderのフォルダ設定情報など、開発には不要）
+.DS_Store
+
+# エディタやIDEの設定ファイル
+.vscode/
+.idea/
+
+# Node.jsの依存パッケージフォルダ（使用する場合）
+node_modules/
+
+# 環境変数ファイル（APIキーなどの機密情報を含む可能性があるため）
+.env
+.env.local
