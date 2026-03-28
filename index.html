@@ -429,11 +429,22 @@
             padding-bottom: max(24px, env(safe-area-inset-bottom));
             text-align: center;
             z-index: 10;
-            display: flex;
+            /* デフォルトは非表示（登録画面でフォームボタンを覆い隠さないため） */
+            display: none;
             flex-direction: row;
             justify-content: center;
             align-items: stretch;
             gap: 10px;
+        }
+
+        /* 会員証画面が表示されている時だけ固定ボタンエリアを表示 */
+        .btn-staff-area.active {
+            display: flex;
+        }
+
+        /* 登録画面：拡大表示時でも送信ボタンが隠れないよう下部に余白を確保 */
+        #registration-view {
+            padding-bottom: 40px;
         }
 
         .btn-staff {
@@ -680,6 +691,14 @@
         function switchView(viewName) {
             Object.values(views).forEach(el => el.classList.remove('active'));
             views[viewName].classList.add('active');
+
+            // 固定ボタンエリア（「スタッフに見せる」「閉じる」）は会員証画面の時だけ表示
+            const staffArea = document.querySelector('.btn-staff-area');
+            if (viewName === 'member') {
+                staffArea.classList.add('active');
+            } else {
+                staffArea.classList.remove('active');
+            }
         }
 
         // --- Core Logic ---
